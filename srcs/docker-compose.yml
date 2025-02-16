@@ -1,0 +1,28 @@
+version: 2.32.4
+services:
+  mariadb:
+    build: ./requirement/mariadb
+    ports:
+      - 3306
+    volumes:
+      - /var/lib/docker/volumes/mariadb
+    networks:
+      - "inception_network"
+  nginx:
+    build: ./requirement/nginx
+    ports:
+      - 9000
+      - 443
+    networks:
+      - "inception_network"
+  wordpress:
+    build: ./requirement/wordpress
+    ports:
+      - 9000
+      - 3306
+    volumes:
+      - /var/lib/docker/volumes/wordpress
+    networks:
+      - "inception_network"
+networks:
+  - "inception_network"
