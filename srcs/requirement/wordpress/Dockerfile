@@ -1,1 +1,1 @@
-FROM alpine:3.21.3
+FROM debian:buster
