@@ -16,13 +16,13 @@ RUN openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/ngin
 
 #RUN mkdir -p /var/run/nginx
 
-COPY conf/default.conf /etc/nginx/conf.d/
-#COPY ./index.php /var/www/html
+COPY conf/nginx.conf /etc/nginx/conf.d/
+#COPY ./tools/index.php /var/www/html
 
 RUN chmod 755 /var/www/html
 #RUN chown -R www-data:www-data /var/www/html
 
-COPY entrypoint.sh ./entrypoint.sh
+COPY ./tools/entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
 CMD ["./entrypoint.sh"]
