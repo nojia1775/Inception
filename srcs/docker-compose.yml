@@ -6,8 +6,6 @@ services:
     build: ./requirement/mariadb
     ports:
       - "3306:3306"
-    volumes:
-      - /var/lib/docker/volumes/mariadb
     networks:
       - "inception_network"
     env_file: .env
