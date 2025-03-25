@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 
 RUN apt update -y && apt upgrade -y
 RUN apt install wget -y
@@ -8,14 +8,15 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 RUN chmod +x wp-cli.phar
 RUN mv wp-cli.phar /usr/local/bin/wp
 
-#COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
 
-RUN mkdir /run/php
+RUN mkdir -p /run/php && chown www-data:www-data /run/php
 
-COPY ./tools/create_wordpress.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/create_wordpress.sh
-ENTRYPOINT ["/usr/local/bin/create_wordpress.sh"]
+COPY ./tools/create_wordpress.sh .
+RUN chmod +x create_wordpress.sh
 
 WORKDIR /var/www/html
 
-#CMD ["/usr/sbin/php-fpm7.3", "-F"]
+EXPOSE 9000
+
+CMD ["./create_wordpress.sh"]

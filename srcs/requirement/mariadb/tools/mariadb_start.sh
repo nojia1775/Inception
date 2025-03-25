@@ -1,23 +1,35 @@
 #!/bin/bash
 
-service mysql start;
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+	mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	/usr/bin/mysqld_safe --datadir=/var/lib/mysql &
+	until mysqladmin ping > /dev/null 2>&1; do
+		sleep 2
+	done
+	mysql -u root <<EOF
+CREATE DATABASE IF NOT EXISTS $SQL_DATABASE;
+CREATE USER IF NOT EXISTS '{$SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${SQL_DATABASE}.* TO '${SQL_USER}'@'%';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';
+FLUSH PRIVILEGES;
+EOF
+	mysqladmin -u root -p${SQL_ROOT_PASSWORD} shutdown;
+else
+	/usr/bin/mysqld_safe --datadir=/var/lib/mysql &
+	until mysqladmin ping >/dev/null 2>&1; do
+		sleep 2
+	done
+	mysql -uroot -p${SQL_ROOT_PASSWORD} -e "SELECT User FROM mysql.user WHERE User='${SQL_USER}'" | grep -q ${SQL_USER}
+	USER_EXISTS=$?
 
-until mysqladmin ping --silent; do
-	echo "En attente que MySQL demarre..."
-	sleep 2
-done
-
-echo "MySQL est demarre"
-
-#mysql_install_db --user=mysql --ldata=/var/lib/mysql
-
-mysql -e "CREATE DATABASE IF NOT EXISTS $SQL_DATABASE;"
-mysql -e "UPDATE mysql.user SET Host='%' WHERE User='root'"
-mysql -e "CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}'";
-mysql -u root -e "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'; FLUSH PRIVILEGES;"
-mysql -u root -e "GRANT ALL PRIVILEGES ON ${SQL_DATABASE}.* TO '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}'; FLUSH PRIVILEGES;"
-#mysql -e "UPDATE mysql.user SET plugin='mysql_native_password' WHERE User='root';"
-#mysql -u root -p$SQL_ROOT_PASSWORD -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';"
-#mysql -u root -p$SQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
-mysqladmin -u root -p$SQL_ROOT_PASSWORD shutdown
-exec mysqld_safe
+	if [ USER_EXISTS -ne 0 ]; then
+		mysql -uroot -p${SQL_ROOT_PASSWORD} <<EOF
+	CREATE DATABASE IF NOT EXISTS ${SQL_DATABASE};
+	CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}';
+	GRANT ALL PRIVILEGES ON ${SQL_DATABASE}.* TO '${SQL_USER}'@'%';
+	FLUSH PRIVILEGES;
+	EOF
+		fi
+	mysqladmin -uroot -p${SQL_ROOT_PASSWORD} shutdown
+fi
+exec mysqld --user=mysql

@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [[ "$WP_ADMIN" =~ .*admin.* ]]; then
+	echo "Error: Admin name cannot contains 'admin'"
+	exit 1
+fi
+
 if [ -f ./wp-config.php ]
 then
 	echo "wordpress already download"
@@ -15,4 +20,3 @@ else
 	cp wp-config-sample.php wp-config.php
 fi
 exec php-fpm7.3 -F
-exec $@
