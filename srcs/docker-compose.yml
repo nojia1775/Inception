@@ -11,6 +11,8 @@ services:
     restart: always
 
   nginx:
+    volumes:
+      - wordpress_data:/var/www/html
     container_name: nginx
     build:
       context: ./requirement/nginx

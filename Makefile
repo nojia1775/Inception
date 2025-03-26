@@ -2,7 +2,7 @@ all:
 	docker-compose --project-directory srcs/ up --build -d
 
 clean:
-	docker-compose --project-directory srcs/ down -d
+	docker-compose --project-directory srcs/ down
 
 fclean:
 	docker system prune -af
