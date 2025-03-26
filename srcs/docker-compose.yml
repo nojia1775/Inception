@@ -1,7 +1,7 @@
 services:
   mariadb:
     volumes:
-      - mariadb_data:/var/www/html
+      - mariadb_data:/var/lib/mysql
     build: ./requirement/mariadb
     ports:
       - "3306:3306"
@@ -12,8 +12,6 @@ services:
 
   nginx:
     container_name: nginx
-    volumes:
-        - wordpress_data:/var/www/html
     build:
       context: ./requirement/nginx
       dockerfile: Dockerfile

@@ -5,7 +5,7 @@ RUN apt-get upgrade -y
 RUN apt-get install mariadb-server mariadb-client -y
 RUN apt-get install procps -y
 
-RUN mkdir -p /run/mysqld && chown mysql:mysql /run/mysqld
+RUN mkdir -p /run/mysqld && chown mysql:mysql /run/mysqld /var/lib/mysql
 
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 

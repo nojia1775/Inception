@@ -9,9 +9,18 @@ mkdir -p /run/php
 chown -R www-data:www-data /var/www/html
 
 if [ ! -f /var/www/html/wp-config.php ]; then
-	if [ -f /var/www/html/index.php ] && [ ! -f /var/www/html/wp-config.php ]; then
-		rm -rf /var/www/html/*
-	fi
+	#if [ -f /var/www/html/index.nginx-debian.html ]; then
+	rm -rf /var/www/html/*
+	wget http://wordpress.org/latest.tar.gz
+	tar -xf latest.tar.gz
+	mv wordpress/* .
+	rm -rf wordpress latest.tar.gz
+	sed -i "s/username_here/$SQL_USER/g" wp-config-sample.php
+	sed -i "s/password_here/$SQL_PASSWORD/g" wp-config-sample.php
+	sed -i "s/localhost/$SQL_HOSTNAME/g" wp-config-sample.php
+	sed -i "s/database_name_here/$SQL_DATABASE/g" wp-config-sample.php
+	cp wp-config-sample.php wp-config.php
+	#fi
 	max_tries=60
 	count=0
 	while ! ping -c 1 mariadb &>/dev/null; do
@@ -59,6 +68,6 @@ fi
 if [ -d /var/www/html ]; then
 	chown -R www-data:www-data /var/www/html
 	find /var/www/html -type d -exec chmod 755 {} \;
-	find /var/www/html -type f -exec chmod 644 {} \;
+	find /var/www/html/ -type f -exec chmod 644 {} \;
 fi
 exec php-fpm7.3 -F
