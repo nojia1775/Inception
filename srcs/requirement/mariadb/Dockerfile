@@ -1,9 +1,9 @@
 FROM debian:bullseye
 
-RUN apt update -y
-RUN apt upgrade -y
+RUN apt-get update -y
+RUN apt-get upgrade -y
 RUN apt-get install mariadb-server mariadb-client -y
-RUN apt install procps -y
+RUN apt-get install procps -y
 
 RUN mkdir -p /run/mysqld && chown mysql:mysql /run/mysqld
 

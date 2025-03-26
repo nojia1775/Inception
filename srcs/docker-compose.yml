@@ -1,4 +1,3 @@
-version: "3"
 services:
   mariadb:
     volumes:
@@ -48,5 +47,15 @@ networks:
     driver: bridge
 
 volumes:
-  wordpress_data:
+  wordpress_data: 
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/nojia/42/inception/data/wordpress
+      o: bind
   mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/nojia/42/inception/data/mysql
+      o: bind

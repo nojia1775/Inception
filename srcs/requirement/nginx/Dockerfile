@@ -1,11 +1,11 @@
 FROM debian:bullseye
 
-RUN apt update -y
-RUN apt install nginx -y
+RUN apt-get update -y
+RUN apt-get install nginx -y
 
 ##DEBUG A SUPPRIMER#####
-RUN apt install vim -y
-RUN apt install curl -y
+RUN apt-get install vim -y
+RUN apt-get install curl -y
 ########################
 
 RUN service nginx restart
