@@ -20,5 +20,5 @@ COPY conf/nginx.conf /etc/nginx/conf.d/nginx.conf
 
 RUN chmod 755 /var/www/html
 RUN chown -R www-data:www-data /var/www/html
-
+RUN sleep 10
 CMD ["nginx", "-g", "daemon off;"]

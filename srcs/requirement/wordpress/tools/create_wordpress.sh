@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#if [[ "${$WP_ADMIN}" =~ .*admin.* ]]; then
+#if [ "${$WP_ADMIN}" =~ .*admin.* ]; then
 #	echo "Error: Admin name cannot contains 'admin'"
 #	exit 1
 #fi
@@ -9,7 +9,6 @@ mkdir -p /run/php
 chown -R www-data:www-data /var/www/html
 
 if [ ! -f /var/www/html/wp-config.php ]; then
-	#if [ -f /var/www/html/index.nginx-debian.html ]; then
 	rm -rf /var/www/html/*
 	wget http://wordpress.org/latest.tar.gz
 	tar -xf latest.tar.gz
@@ -20,7 +19,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 	sed -i "s/localhost/$SQL_HOSTNAME/g" wp-config-sample.php
 	sed -i "s/database_name_here/$SQL_DATABASE/g" wp-config-sample.php
 	cp wp-config-sample.php wp-config.php
-	#fi
 	max_tries=60
 	count=0
 	while ! ping -c 1 mariadb &>/dev/null; do
@@ -43,7 +41,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 		fi
 		sleep 5
 	done
-	cd /var/www/html
 	wp core download --allow-root
 	wp config create --dbname=${SQL_DATABASE} \
 			 --dbuser=${SQL_USER} \
