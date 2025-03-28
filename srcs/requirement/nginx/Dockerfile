@@ -17,8 +17,11 @@ RUN mkdir -p /var/run/nginx
 
 COPY conf/main.conf /etc/nginx/nginx.conf
 COPY conf/nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY tools/nginx.sh /nginx.sh
+
+RUN chmod +x /nginx.sh
 
 RUN chmod 755 /var/www/html
 RUN chown -R www-data:www-data /var/www/html
-RUN sleep 10
-CMD ["nginx", "-g", "daemon off;"]
+
+CMD ["/nginx.sh"]
