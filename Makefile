@@ -8,6 +8,7 @@ clean:
 fclean: clean
 	rm -rf data
 	docker system prune -af
+	docker volume rm srcs_mariadb_data srcs_wordpress_data
 
 re: fclean all
 

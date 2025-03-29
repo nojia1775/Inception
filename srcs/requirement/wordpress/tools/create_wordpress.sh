@@ -21,26 +21,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 	cp wp-config-sample.php wp-config.php
 	max_tries=60
 	count=0
-	while ! ping -c 1 mariadb &>/dev/null; do
-		sleep 5
-		count=$((count+1))
-		if [ $count -ge 30 ]; then
-			break
-		fi
-	done
-	count=0
-	while ! mariadb -h mariadb -u${SQL_USER} -p${SQL_PASSWORD} -e "SHOW DATABASES;" 2>/dev/null; do
-		count=$((count+1))
-		if [ $count -ge $max_tries ]; then
-			if mariadb -h mariadb -u root -p${SQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${SQL_DATABASE}; GRANT ALL PRIVILEGES ON ${SQL_DATABASE}.* TO '${SQL_USER}'@'%'; FLUSH PRIVILEGES;" 2>/dev/null; then
-				break
-			else
-				sleep 10
-				count=$((count-10))
-			fi
-		fi
-		sleep 5
-	done
 	wp core download --allow-root
 	wp config create --dbname=${SQL_DATABASE} \
 			 --dbuser=${SQL_USER} \
@@ -60,6 +40,26 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 	chown -R www-data:www-data /var/www/html
 	find /var/www/html -type d -exec chmod 755 {} \;
 	find /var/www/html -type f -exec chmod 644 {} \;
+	#while ! ping -c 1 mariadb &>/dev/null; do
+	#	sleep 5
+	#	count=$((count+1))
+	#	if [ $count -ge 30 ]; then
+	#		break
+	#	fi
+	#done
+	#count=0
+	#while ! mariadb -h mariadb -u${SQL_USER} -p${SQL_PASSWORD} -e "SHOW DATABASES;" 2>/dev/null; do
+	#	count=$((count+1))
+	#	if [ $count -ge $max_tries ]; then
+	#		if mariadb -h mariadb -u root -p${SQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${SQL_DATABASE}; GRANT ALL PRIVILEGES ON ${SQL_DATABASE}.* TO '${SQL_USER}'@'%'; FLUSH PRIVILEGES;" 2>/dev/null; then
+	#			break
+	#		else
+	#			sleep 10
+	#			count=$((count-10))
+	#		fi
+	#	fi
+	#	sleep 5
+	#done
 fi
 
 if [ -d /var/www/html ]; then
