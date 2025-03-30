@@ -4,7 +4,6 @@ RUN apt-get update -y
 RUN apt-get install nginx -y
 
 ##DEBUG A SUPPRIMER#####
-RUN apt-get install vim -y
 RUN apt-get install curl -y
 ########################
 
