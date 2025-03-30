@@ -1,12 +1,12 @@
 all:
-	mkdir -p data data/wordpress data/mysql
+	mkdir -p /home/nojia/data /home/nojia/data/wordpress /home/nojia/data/mariadb
 	docker-compose --project-directory srcs/ up --build -d
 
 clean:
 	docker-compose --project-directory srcs/ down
 
 fclean: clean
-	rm -rf data
+	rm -rf /home/nojia/data
 	docker system prune -af
 	docker volume rm srcs_mariadb_data srcs_wordpress_data
 

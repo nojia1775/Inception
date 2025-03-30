@@ -2,10 +2,10 @@
 datadir	= /var/lib/mysql
 socket = /run/mysqld/mysqld.sock
 pid-file = /run/mysqld/mysql.pid
+basedir = /usr
 bind_address = 0.0.0.0
 port = 3306
 user = mysql
-skip-networking = 0
 skip-name-resolve
 max_connections = 100
 log_error = /var/log/mysql/error.log

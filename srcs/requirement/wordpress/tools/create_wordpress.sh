@@ -10,23 +10,44 @@ chown -R www-data:www-data /var/www/html
 
 if [ ! -f /var/www/html/wp-config.php ]; then
 	rm -rf /var/www/html/*
-	wget http://wordpress.org/latest.tar.gz
-	tar -xf latest.tar.gz
-	mv wordpress/* .
-	rm -rf wordpress latest.tar.gz
-	sed -i "s/username_here/$SQL_USER/g" wp-config-sample.php
-	sed -i "s/password_here/$SQL_PASSWORD/g" wp-config-sample.php
-	sed -i "s/localhost/$SQL_HOSTNAME/g" wp-config-sample.php
-	sed -i "s/database_name_here/$SQL_DATABASE/g" wp-config-sample.php
-	cp wp-config-sample.php wp-config.php
 	max_tries=60
 	count=0
+	while ! ping -c 1 mariadb &>/dev/null; do
+    	    echo "MariaDB server is not reachable yet..."
+    	    sleep 5
+    	    counter=$((counter+1))
+    	    if [ $counter -ge 30 ]; then
+    	        echo "MariaDB server is still not reachable after $counter attempts. Continuing anyway..."
+    	        break
+    	    fi
+    	done
+	
+    	# Then try to connect to the database
+    	counter=0
+    	while ! mariadb -h mariadb -u$SQL_USER -p$SQL_PASSWORD -e "SHOW DATABASES;" 2>/dev/null; do
+    	    counter=$((counter+1))
+    	    if [ $counter -ge $max_tries ]; then
+    	        echo "Failed to connect to MariaDB after $max_tries attempts. Trying with root..."
+    	        # Try with root user as fallback
+    	        if mariadb -h mariadb -u root -p$SQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $SQL_DATABASE; GRANT ALL ON $SQL_DATABASE.* TO '$SQL_USER'@'%'; FLUSH PRIVILEGES;" 2>/dev/null; then
+    	            echo "Database created with root user."
+    	            break
+    	        else
+    	            echo "Will retry in a few seconds..."
+    	            sleep 10
+    	            counter=$((counter-10))
+    	        fi
+    	    fi
+    	    echo "MariaDB is not ready yet, waiting... Attempt $counter/$max_tries"
+    	    sleep 5
+    	done
 	wp core download --allow-root
 	wp config create --dbname=${SQL_DATABASE} \
 			 --dbuser=${SQL_USER} \
 			 --dbpass=${SQL_PASSWORD} \
 			 --dbhost=mariadb \
 			 --allow-root
+	echo domain name $DOMAINE_NAME
 	wp core install --url=${DOMAINE_NAME} \
 			--title="Wordpress" \
 			--admin_user=${WP_ADMIN} \

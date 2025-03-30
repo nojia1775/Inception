@@ -53,11 +53,11 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/nojia/42/inception/data/wordpress
+      device: /home/nojia/data/wordpress
       o: bind
   mariadb_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/nojia/42/inception/data/mysql
+      device: /home/nojia/data/mariadb
       o: bind
