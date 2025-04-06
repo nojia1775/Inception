@@ -7,7 +7,7 @@ clean:
 
 fclean: clean
 	rm -rf /home/nojia/data
-	docker system prune -af
+	docker system prune -af --volumes
 	docker volume rm srcs_mariadb_data srcs_wordpress_data
 
 re: fclean all
