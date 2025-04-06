@@ -5,7 +5,7 @@ if [ -d /var/www/html ]; then
 	find /var/www/html -type f -exec chmod 644 {} \;
 fi
 
-while [ ! -f /var/www/html/index.php ]; do
+while [ ! -f /var/www/html/START ]; do
 	echo "waiting for wordpress to finish"
 	sleep 2
 done

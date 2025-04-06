@@ -47,7 +47,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 			 --dbpass=${SQL_PASSWORD} \
 			 --dbhost=mariadb \
 			 --allow-root
-	echo domain name $DOMAINE_NAME
 	wp core install --url=${DOMAINE_NAME} \
 			--title="Wordpress" \
 			--admin_user=${WP_ADMIN} \
@@ -88,4 +87,14 @@ if [ -d /var/www/html ]; then
 	find /var/www/html -type d -exec chmod 755 {} \;
 	find /var/www/html/ -type f -exec chmod 644 {} \;
 fi
+
+wp option update siteur1 "https://$DOMAIN_NAME" --allow-root
+wp option update home "https://$DOMAIN_NAME" --allow-root
+wp search-replace "https://example.com" "https://$DOMAIN_NAME" --all-tables --allow-root
+wp cache flush --allow-root
+wp rewrite flush --allow-root
+
+
+touch START
+
 exec php-fpm7.3 -F
