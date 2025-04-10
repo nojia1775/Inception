@@ -53,11 +53,11 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/nojia/data/wordpress
+      device: /home/nadjemia42/data/wordpress
       o: bind
   mariadb_data:
     driver: local
     driver_opts:
       type: none
-      device: /home/nojia/data/mariadb
+      device: /home/nadjemia42/data/mariadb
       o: bind
